@@ -2,9 +2,19 @@
 
 ## 环境要求
 
-- Node.js ≥ 22
+- Node.js 22（见 `.nvmrc`，使用 `nvm use` 自动切换）
 - pnpm ≥ 9
 - Go 后端 authd 运行中（端口 8080）
+
+## npm 镜像配置
+
+国内环境通过 `.npmrc` 配置淘宝镜像：
+
+```
+registry=https://registry.npmmirror.com
+```
+
+Docker 构建时 COPY 此文件到镜像内。
 
 ## 本地开发
 
@@ -16,7 +26,15 @@ pnpm install
 pnpm dev
 ```
 
-开发模式下需要 authd 在 `localhost:8080` 运行。可以通过 `next.config.ts` 配置 rewrites 进行代理（当前依赖 nginx，本地开发需手动配置或直接连接后端）。
+开发模式下需要 authd 在 `localhost:8080` 运行。
+
+### 开发环境 API 代理
+
+生产环境由 nginx 反代 API 到 authd:8080，开发环境需要用 Next.js 代理。
+
+Next.js 16 将 `middleware.ts` 重命名为 `proxy.ts`（函数名从 `middleware` 改为 `proxy`），推荐用 `proxy.ts` + `NextResponse.rewrite()` 实现，而非手动 `fetch()`。
+
+**当前状态**：`middleware.ts` 使用 `fetch()` 转发方式仍有问题，待切换到 `proxy.ts` 方案。此问题详情见 CLAUDE.md 已知问题。
 
 ## 添加 shadcn 组件
 
@@ -25,6 +43,14 @@ npx shadcn@latest add <component-name>
 ```
 
 注意：当前环境需使用 `npx` 而非 `pnpm exec shadcn`。
+
+## 依赖说明
+
+| 依赖 | 用途 | 注意事项 |
+|------|------|----------|
+| recharts 3.8 | Dashboard 图表（环形图/面积图） | Tooltip formatter 参数类型为 `ValueType \| undefined`，需用 `Number()` 转换 |
+| dayjs 1.11 | 时间格式化/时长计算 | 需引入 duration 插件 |
+| sonner 2.0 | Toast 通知 | 全局 Toaster 放在 RootLayout |
 
 ## 项目约定
 

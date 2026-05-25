@@ -7,12 +7,16 @@
 - **框架**：Next.js 16 (App Router) + TypeScript
 - **样式**：Tailwind CSS 4 + shadcn/ui (Radix Nova)
 - **图标**：Lucide React
+- **图表**：recharts（仪表盘环形图/面积图）
 - **字体**：Geist Sans / Geist Mono
 - **部署**：Docker (standalone + nginx 反代)
 
 ## 快速开始
 
 ```bash
+# 0. 切换 Node 版本（项目已配置 .nvmrc）
+nvm use
+
 # 1. 安装依赖
 pnpm install
 
@@ -27,16 +31,19 @@ pnpm build
 pnpm start
 ```
 
+> **注意**：开发模式下需要 authd 后端在本机 `:8080` 运行，API 代理方案见 [CLAUDE.md](CLAUDE.md)。
+
 ## Docker 部署
 
 ```bash
-# 单独构建并运行
+# 前置条件：authd 后端已在本机 :8080 运行
+
+# 使用 docker compose（推荐）
+sudo docker compose up --build -d
+
+# 或手动构建
 docker build -t nas-web .
 docker run --network host nas-web
-
-# 或配合 ldap-demo 整体启动
-cd ../ldap-demo
-sudo docker compose up --build -d
 ```
 
 容器内部：

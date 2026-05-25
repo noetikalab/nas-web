@@ -72,3 +72,23 @@ RootLayout (html + body + Toaster)
   - `/_next/static/` → 本地文件（1 年缓存）
   - 其他 → Next.js `:3000`
 - `network_mode: host`：与 authd 共享宿主网络栈
+
+### 开发环境代理
+
+开发环境（`pnpm dev`）不含 nginx，需要 Next.js 自身代理 API 请求：
+
+- **Next.js 16 变更**：`middleware.ts` → `proxy.ts`，运行时从 Edge 改为 Node.js
+- `proxy.ts` 使用 `NextResponse.rewrite()` 可以直接 rewrite 到外部 URL（`http://127.0.0.1:8080`）
+- `/api/*` 路径也可用 `next.config.ts` 的 `beforeFiles` rewrites（无页面路由冲突）
+- `/login` 等路径需在 `proxy.ts` 中按 HTTP method 区分：GET 渲染页面，POST/PUT/DELETE rewrite 到 authd
+
+执行顺序：headers → redirects → **proxy** → `beforeFiles` rewrites → 文件系统路由
+
+### Dashboard 图表
+
+Dashboard 使用 [recharts](https://recharts.org) 渲染：
+- **存储环形图**：`PieChart` + `innerRadius`/`outerRadius`，已用/剩余分段
+- **CPU 面积图**：`AreaChart` + linearGradient 填充，黑色主题
+- **内存面积图**：`AreaChart` + linearGradient 填充，灰色主题
+
+历史数据为 `generatePseudoHistory()` 生成的伪数据（sin 波 + 随机抖动），实际线上可替换为真实监控数据的 GET 端点。

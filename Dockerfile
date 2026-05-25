@@ -5,22 +5,22 @@
 # ============================================================
 
 # --- Stage 1: Build ---
-FROM node:24-alpine AS builder
+FROM node:22-alpine AS builder
 WORKDIR /app
 
 # 安装 pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # 先复制依赖文件，利用 Docker 层缓存
-COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+COPY package.json pnpm-lock.yaml .npmrc ./
+RUN pnpm install --ignore-scripts
 
 # 复制源码并构建
 COPY . .
 RUN pnpm build
 
 # --- Stage 2: Runtime ---
-FROM node:24-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 
 # 安装 nginx

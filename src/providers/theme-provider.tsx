@@ -11,7 +11,7 @@
  * 实现方式：
  *   - 在 <html> 上添加/移除 "dark" class
  *   - 状态持久化到 localStorage key: "nas-theme"
- *   - 初始化时从 localStorage 读取，无则默认 "system"
+ *   - 初始化时从 localStorage 读取，无则默认 "dark"
  */
 
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
@@ -28,10 +28,10 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 /** 从 localStorage 读取主题设置 */
 function getStoredTheme(): Theme {
-  if (typeof window === "undefined") return "system";
+  if (typeof window === "undefined") return "dark";
   const stored = localStorage.getItem("nas-theme");
-  if (stored === "light" || stored === "dark") return stored;
-  return "system";
+  if (stored === "light" || stored === "dark" || stored === "system") return stored;
+  return "dark";
 }
 
 /** 根据 Theme 设置解析实际应用的 light/dark */
@@ -53,8 +53,8 @@ function applyTheme(resolved: "light" | "dark") {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("system");
-  const [resolved, setResolved] = useState<"light" | "dark">("light");
+  const [theme, setThemeState] = useState<Theme>("dark");
+  const [resolved, setResolved] = useState<"light" | "dark">("dark");
   const [mounted, setMounted] = useState(false);
 
   // 初始化：从 localStorage 读取并应用

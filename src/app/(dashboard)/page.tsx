@@ -10,9 +10,9 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import { formatBytes, formatUptime } from "@/lib/utils";
 import type { DashboardStats, RecentEntry } from "@/lib/types";
 import { StatCards } from "@/components/dashboard/stat-cards";
+import { DashboardCharts } from "@/components/dashboard/charts";
 import { RecentFiles } from "@/components/dashboard/recent-files";
 
 export default function DashboardPage() {
@@ -50,6 +50,7 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <h1 className="text-lg font-semibold">仪表盘</h1>
       <StatCards stats={stats} />
+      <DashboardCharts stats={stats} />
       <RecentFiles entries={recent} />
     </div>
   );

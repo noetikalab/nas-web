@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
+const AUTH_BACKEND = process.env.AUTH_BACKEND || "http://localhost:8080";
+
 const nextConfig: NextConfig = {
-  // 独立输出模式，用于 Docker 部署（生成 standalone server.js）
   output: "standalone",
 };
 
