@@ -1,36 +1,73 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# NAS Web 管理后台
 
-## Getting Started
+个人 NAS 存储管理后台 — 文件管理、用户管理、系统监控。
 
-First, run the development server:
+## 技术栈
+
+- **框架**：Next.js 16 (App Router) + TypeScript
+- **样式**：Tailwind CSS 4 + shadcn/ui (Radix Nova)
+- **图标**：Lucide React
+- **字体**：Geist Sans / Geist Mono
+- **部署**：Docker (standalone + nginx 反代)
+
+## 快速开始
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# 1. 安装依赖
+pnpm install
+
+# 2. 启动开发服务器
 pnpm dev
-# or
-bun dev
+# → http://localhost:3000
+
+# 3. 构建生产版本
+pnpm build
+
+# 4. 启动生产服务器
+pnpm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Docker 部署
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# 单独构建并运行
+docker build -t nas-web .
+docker run --network host nas-web
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# 或配合 ldap-demo 整体启动
+cd ../ldap-demo
+sudo docker compose up --build -d
+```
 
-## Learn More
+容器内部：
+- nginx 监听 `:80`，反代 API 请求到 authd (`:8080`)
+- Next.js standalone 运行在 `:3000`（仅内部访问）
 
-To learn more about Next.js, take a look at the following resources:
+## 目录结构
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── app/                  # Next.js App Router 页面
+│   ├── (dashboard)/      # 已登录页面（带导航壳）
+│   └── login/            # 登录页（独立布局）
+├── components/
+│   ├── layout/           # 布局组件（Sidebar/Topbar）
+│   ├── dashboard/        # 仪表盘组件
+│   └── ui/               # shadcn/ui 基础组件
+├── hooks/                # React hooks
+├── lib/                  # 工具库（API/Auth/Types/Utils）
+└── providers/            # Context Providers（Theme/Nav）
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 文档
 
-## Deploy on Vercel
+| 文档 | 说明 |
+|------|------|
+| [architecture.md](docs/architecture.md) | 整体架构设计 |
+| [design-system.md](docs/design-system.md) | UI 设计系统 |
+| [api-map.md](docs/api-map.md) | 前后端 API 对照表 |
+| [development.md](docs/development.md) | 开发指南 |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 设计风格
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+「Precision」— 黑白极简，冷峻克制。全线黑白灰，仅聚焦环使用蓝色。支持 Light/Dark 主题切换，侧栏/顶栏双布局模式。
