@@ -12,8 +12,11 @@ export interface LoginRequest {
   password: string;
 }
 
+/** 登录响应，含 JWT token 和用户角色 */
 export interface LoginResponse {
   token: string;
+  /** 用户角色："admin" 可访问管理功能，"user" 仅文件操作 */
+  role: "admin" | "user";
 }
 
 export interface RegisterRequest {
@@ -24,6 +27,8 @@ export interface RegisterRequest {
 export interface RegisterResponse {
   token: string;
   uid: number;
+  /** 注册后的角色，首个用户自动为 "admin" */
+  role: "admin" | "user";
 }
 
 // ============================================================
@@ -55,12 +60,14 @@ export interface RecentEntry {
 // Users（对应 UserEntry / UserListResponse）
 // ============================================================
 
-/** 用户条目 */
+/** 用户条目，含 LDAP employeeType 角色 */
 export interface UserEntry {
   username: string;
   uid: number;
   gid: number;
   home: string;
+  /** 用户角色："admin" 或 "user" */
+  role: "admin" | "user";
 }
 
 // ============================================================
@@ -110,6 +117,25 @@ export interface LogEntry {
   user: string;
   action: string;
   detail: string;
+}
+
+/** 审计日志分页列表响应 */
+export interface LogListResponse {
+  entries: LogEntry[];
+  total: number;
+  page: number;
+  limit: number;
+  total_pages: number;
+}
+
+// ============================================================
+// API 通用响应
+// ============================================================
+
+/** 操作成功响应（含路径） */
+export interface OKPathResponse {
+  ok: boolean;
+  path: string;
 }
 
 // ============================================================

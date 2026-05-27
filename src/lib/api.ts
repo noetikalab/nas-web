@@ -3,9 +3,9 @@
  *
  * 用法：
  *   import { api } from "@/lib/api";
- *   const stats = await api.get<DashboardStats>("/api/dashboard/stats");
- *   await api.post("/api/files/mkdir", { path: "/data/alice/newdir" });
- *   await api.del("/api/users/alice");
+ *   const stats = await api.get<DashboardStats>("/dashboard/stats");
+ *   await api.post("/files/mkdir", { path: "/data/alice/newdir" });
+ *   await api.del("/files?path=...");
  *
  * 特性：
  *   - 自动从 localStorage 读取 token 并注入 Authorization header
@@ -14,7 +14,7 @@
  *   - 上传文件使用 api.upload()，不设置 Content-Type（让浏览器自动设置 boundary）
  */
 
-const API_BASE = ""; // 同源，nginx 将 /api/* 反代到 authd:8080
+const API_BASE = "/api"; // 同源，nginx location /api/ → authd:8080
 
 type HttpMethod = "GET" | "POST" | "DELETE";
 

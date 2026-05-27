@@ -9,7 +9,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import { dashboardApi } from "@/services";
 import type { DashboardStats, RecentEntry } from "@/lib/types";
 import { StatCards } from "@/components/dashboard/stat-cards";
 import { DashboardCharts } from "@/components/dashboard/charts";
@@ -24,8 +24,8 @@ export default function DashboardPage() {
     async function fetchData() {
       try {
         const [s, r] = await Promise.all([
-          api.get<DashboardStats>("/api/dashboard/stats"),
-          api.get<RecentEntry[]>("/api/dashboard/recent?limit=10"),
+          dashboardApi.getStats(),
+          dashboardApi.getRecent(10),
         ]);
         setStats(s);
         setRecent(r);
