@@ -70,6 +70,39 @@ export interface UserEntry {
   role: "admin" | "user";
 }
 
+/** 用户列表 API 响应（后端返回 { users: UserEntry[] }） */
+export interface UserListResponse {
+  users: UserEntry[];
+}
+
+/** admin 创建用户的请求体 */
+export interface CreateUserRequest {
+  username: string;
+  password: string;
+  /** 角色，默认 "user" */
+  role?: "admin" | "user";
+}
+
+/** admin 创建用户成功响应 */
+export interface CreateUserResponse {
+  ok: boolean;
+  username: string;
+  uid: number;
+}
+
+/** 单条 ACL 权限条目 */
+export interface PermissionEntry {
+  username: string;
+  /** 权限："r-x"（只读）或 "rwx"（读写） */
+  permission: "r-x" | "rwx";
+}
+
+/** ACL 权限列表响应 */
+export interface PermissionListResponse {
+  path: string;
+  permissions: PermissionEntry[];
+}
+
 // ============================================================
 // Files（对应 system/file.go 中的 FileInfo）
 // ============================================================
@@ -107,25 +140,68 @@ export interface ServicesResponse {
 }
 
 // ============================================================
-// Logs（对应 LogEntry / LogListResponse）
+// Certified Operations / Proof（对应后端 CertifiedOperation / ProofBundle）
 // ============================================================
 
-/** 审计日志条目 */
-export interface LogEntry {
-  timestamp: string;
+/** 存证操作记录（对应 certified_operations 表全字段） */
+export interface CertifiedOperation {
+  id: number;
+  timestamp: number;
   type: "file" | "auth" | "system";
-  user: string;
+  user_name: string;
+  user_uid: number;
   action: string;
-  detail: string;
+  path: string;
+  dest_path?: string;
+  detail?: string;
+  file_name: string;
+  is_dir: boolean;
+  file_size: number;
+  mime_type: string;
+  owner_uid: number;
+  owner_name: string;
+  group_name: string;
+  file_perm: string;
+  mod_time: number;
+  file_hash?: string;
+  hash_algo: string;
 }
 
 /** 审计日志分页列表响应 */
-export interface LogListResponse {
-  entries: LogEntry[];
+export interface CertifiedOperationListResponse {
+  entries: CertifiedOperation[];
   total: number;
   page: number;
   limit: number;
   total_pages: number;
+}
+
+/** 单个存证哈希链记录 */
+export interface ProofRecordResponse {
+  cert_id: number;
+  chain_index: number;
+  prev_hash?: string;
+  data_hash: string;
+  signature?: string;
+  device_uid?: string;
+  sig_timestamp: number;
+  hash_algo: string;
+}
+
+/** 存证详情（操作 + 哈希链） */
+export interface ProofDetailResponse {
+  operation: CertifiedOperation;
+  proof_record: ProofRecordResponse;
+}
+
+/** 导出存证包 */
+export interface ProofBundle {
+  device_uid: string;
+  pub_key: string;
+  records: ProofRecordResponse[];
+  operations: CertifiedOperation[];
+  export_time: number;
+  total_count: number;
 }
 
 // ============================================================

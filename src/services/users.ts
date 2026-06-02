@@ -3,16 +3,20 @@
  */
 
 import { api } from "@/lib/api";
-import type { UserEntry } from "@/lib/types";
+import type { CreateUserRequest, CreateUserResponse, UserListResponse } from "@/lib/types";
 
 export const usersApi = {
-  /** 用户列表 */
+  /** 用户列表（后端返回 { users: UserEntry[] }） */
   list: () =>
-    api.get<UserEntry[]>("/users"),
+    api.get<UserListResponse>("/users"),
 
   /** 用户总数 */
   count: () =>
     api.get<{ count: number }>("/users/count"),
+
+  /** admin 创建用户 */
+  create: (data: CreateUserRequest) =>
+    api.post<CreateUserResponse>("/users", data),
 
   /** 删除用户 */
   delete: (username: string) =>

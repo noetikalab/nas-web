@@ -142,7 +142,7 @@ export function FilePreview({
       <SheetContent
         side="right"
         showCloseButton={false}
-        className="w-full sm:max-w-lg lg:max-w-xl p-0 flex flex-col"
+        className="w-full sm:max-w-2xl lg:max-w-4xl p-0 flex flex-col"
       >
         {/* 头部：文件名 + 操作按钮 */}
         <SheetHeader className="px-4 py-3 border-b border-border shrink-0">

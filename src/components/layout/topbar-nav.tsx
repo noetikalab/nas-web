@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavMode } from "@/providers/nav-provider";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ThemeToggle } from "./theme-toggle";
@@ -29,19 +30,25 @@ interface NavItem {
   label: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
+  adminOnly: boolean;
 }
 
 const navItems: NavItem[] = [
-  { label: "仪表盘", href: "/", icon: LayoutDashboard },
-  { label: "文件管理", href: "/files", icon: FolderOpen },
-  { label: "用户管理", href: "/users", icon: Users },
-  { label: "审计日志", href: "/logs", icon: ScrollText },
-  { label: "设置", href: "/settings", icon: Settings },
+  { label: "仪表盘", href: "/", icon: LayoutDashboard, adminOnly: true },
+  { label: "文件管理", href: "/files", icon: FolderOpen, adminOnly: false },
+  { label: "用户管理", href: "/users", icon: Users, adminOnly: true },
+  { label: "审计日志", href: "/logs", icon: ScrollText, adminOnly: true },
+  { label: "设置", href: "/settings", icon: Settings, adminOnly: true },
 ];
 
 export function TopbarNav() {
   const pathname = usePathname();
   const { toggle } = useNavMode();
+  const { role } = useAuth();
+
+  const visibleItems = role === "admin"
+    ? navItems
+    : navItems.filter((item) => !item.adminOnly);
 
   return (
     <header className="flex h-14 items-center border-b border-border bg-card px-4">
@@ -53,7 +60,7 @@ export function TopbarNav() {
 
       {/* 导航项 */}
       <nav className="flex items-center gap-1">
-        {navItems.map((item) => {
+        {visibleItems.map((item) => {
           const isActive =
             item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           const Icon = item.icon;

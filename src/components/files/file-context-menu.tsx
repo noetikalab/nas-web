@@ -19,7 +19,7 @@
  */
 
 import { Item, Menu, useContextMenu } from "react-contexify";
-import { Eye, Download, Pencil, Trash2 } from "lucide-react";
+import { Eye, Download, Pencil, Share2, Trash2 } from "lucide-react";
 
 /** 右键菜单 ID，全局唯一 */
 export const FILE_CONTEXT_MENU_ID = "file-context-menu";
@@ -34,6 +34,8 @@ export interface FileContextMenuHandlers {
   onRename: (fileName: string) => void;
   /** 删除 */
   onDelete: (fileName: string) => void;
+  /** 共享权限管理（仅 admin 可见） */
+  onShare: (fileName: string) => void;
 }
 
 /**
@@ -75,6 +77,12 @@ export function FileContextMenu({ handlers, fileName, isDirectory }: FileContext
       )}
 
       {/* 公共 */}
+      <Item onClick={() => handlers.onShare(fileName)}>
+        <div className="flex items-center gap-2 px-1 py-0.5 text-sm">
+          <Share2 className="size-4" />
+          共享
+        </div>
+      </Item>
       <Item onClick={() => handlers.onRename(fileName)}>
         <div className="flex items-center gap-2 px-1 py-0.5 text-sm">
           <Pencil className="size-4" />

@@ -159,11 +159,25 @@ sudo docker compose up --build -d    # 独立部署（无需 ldap-demo docker co
 
 **临时方案**：`pnpm dev` 开发模式上传正常，待进一步排查 Docker 部署下的根因
 
-### 目录树偶尔收缩后无法展开（暂未解决）
+### 目录树偶尔收缩后无法展开（已解决 ✅）
 
 **现象**：点击顶层目录展开正常，点击收起来后展开图标消失，目录树只显示顶层节点
 
-**待排查**：`directory-tree.tsx` 中 `handleToggle` 递归更新树的逻辑
+**根因**：`directory-tree.tsx` 的 `handleToggle` 折叠时只清空了 `children: []`，没有重置 `loaded: false`。再次点击时 `loaded` 仍为 true，`children` 为空，既不走折叠分支也不走懒加载分支
+
+**修复**：折叠时同时设置 `loaded: false, children: []`
+
+### 文件预览 404（已解决 ✅）
+
+**现象**：点击预览图片/HTML 返回 404，请求 URL 为 `/files/download?path=...`（缺少 `/api` 前缀）
+
+**根因**：预览链路中的 `useFileBlob`/`useFileText` hooks 和 `filesApi.getBlobUrl`/`getText` 直接使用 `fetch()` 绕过了 ApiClient 的 `/api` 前缀自动注入
+
+**修复**：
+1. `lib/api.ts` 新增 `requestRaw()` 方法（返回 Response，不做 JSON 解析）
+2. `filesApi.getBlobUrl/getText` 通过 `requestRaw()` 统一调用
+3. `useFileBlob/useFileText` hooks 通过 `filesApi` 统一调用，不再手写 fetch
+4. `use-file-blob.ts` 删除了本地 `getToken()` 函数，token 注入由 ApiClient 统一处理
 
 ## 约束
 

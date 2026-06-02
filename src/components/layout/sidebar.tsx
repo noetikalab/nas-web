@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useNavMode } from "@/providers/nav-provider";
+import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -32,19 +33,26 @@ interface NavItem {
   label: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
+  adminOnly: boolean;
 }
 
 const navItems: NavItem[] = [
-  { label: "仪表盘", href: "/", icon: LayoutDashboard },
-  { label: "文件管理", href: "/files", icon: FolderOpen },
-  { label: "用户管理", href: "/users", icon: Users },
-  { label: "审计日志", href: "/logs", icon: ScrollText },
-  { label: "系统设置", href: "/settings", icon: Settings },
+  { label: "仪表盘", href: "/", icon: LayoutDashboard, adminOnly: true },
+  { label: "文件管理", href: "/files", icon: FolderOpen, adminOnly: false },
+  { label: "用户管理", href: "/users", icon: Users, adminOnly: true },
+  { label: "审计日志", href: "/logs", icon: ScrollText, adminOnly: true },
+  { label: "系统设置", href: "/settings", icon: Settings, adminOnly: true },
 ];
 
 export function Sidebar() {
   const pathname = usePathname();
   const { collapsed, setCollapsed, toggle } = useNavMode();
+  const { role } = useAuth();
+
+  // 普通用户只显示非 adminOnly 的菜单项
+  const visibleItems = role === "admin"
+    ? navItems
+    : navItems.filter((item) => !item.adminOnly);
 
   return (
     <aside
@@ -61,7 +69,7 @@ export function Sidebar() {
 
       {/* 导航列表 */}
       <nav className="flex-1 space-y-1 p-2">
-        {navItems.map((item) => {
+        {visibleItems.map((item) => {
           const isActive =
             item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
           const Icon = item.icon;

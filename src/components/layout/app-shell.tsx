@@ -7,7 +7,8 @@
  * 未登录时自动重定向到 /login（通过 useAuth hook）。
  */
 
-import { type ReactNode } from "react";
+import { type ReactNode, useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { NavProvider, useNavMode } from "@/providers/nav-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,8 +18,20 @@ import { TopbarNav } from "./topbar-nav";
 import { AppTopbar } from "./app-topbar";
 
 function ShellContent({ children }: { children: ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, role, loading } = useAuth();
   const { mode } = useNavMode();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  // 非 admin 访问管理页面时重定向
+  useEffect(() => {
+    if (!loading && role === "user") {
+      const adminPaths = ["/users", "/logs", "/settings"];
+      if (adminPaths.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+        router.replace("/files");
+      }
+    }
+  }, [loading, role, pathname, router]);
 
   if (loading) {
     return (

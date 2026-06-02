@@ -49,7 +49,9 @@ import { UploadDialog } from "@/components/files/upload-dialog";
 import { MkdirDialog } from "@/components/files/mkdir-dialog";
 import { RenameDialog } from "@/components/files/rename-dialog";
 import { DeleteConfirm } from "@/components/files/delete-confirm";
+import { ShareDialog } from "@/components/files/share-dialog";
 import { filesApi } from "@/services";
+import { getUsername } from "@/lib/auth";
 import type { FileInfo } from "@/lib/types";
 
 // ============================================================
@@ -186,11 +188,9 @@ export default function FilesPage() {
     isDirectory: boolean;
   }>({ open: false, name: "", isDirectory: false });
   const [deleteState, setDeleteState] = useState<{
-    open: boolean;
-    items: string[];
+    open: boolean; items: string[];
   }>({ open: false, items: [] });
-
-  // —— 右键菜单 ——
+  const [sharePath, setSharePath] = useState<string | null>(null);
   const [contextTarget, setContextTarget] = useState<{
     fileName: string;
     isDirectory: boolean;
@@ -216,6 +216,10 @@ export default function FilesPage() {
       },
       onDelete: (fileName) => {
         setDeleteState({ open: true, items: [fileName] });
+      },
+      onShare: (fileName) => {
+        const fullPath = `${path.replace(/\/$/, "")}/${fileName}`;
+        setSharePath(fullPath);
       },
     }),
     [files, path, openPreview],
@@ -271,7 +275,7 @@ export default function FilesPage() {
           className="shrink-0 border-r border-border overflow-hidden"
           style={{ width: sidebarWidth }}
         >
-          <DirectoryTree currentPath={path} onSelect={setPath} />
+          <DirectoryTree currentPath={path} onSelect={setPath} username={getUsername() ?? ""} />
         </div>
 
         {/* 拖拽分隔条 */}
@@ -404,6 +408,11 @@ export default function FilesPage() {
           setSelected(new Set());
           refresh();
         }}
+      />
+      <ShareDialog
+        path={sharePath ?? ""}
+        open={!!sharePath}
+        onClose={() => setSharePath(null)}
       />
     </div>
   );
