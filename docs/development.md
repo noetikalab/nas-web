@@ -109,3 +109,7 @@ sudo docker compose up --build -d
 | `src/lib/` | 工具库（不含 React，纯函数） |
 | `src/hooks/` | 自定义 React hooks |
 | `src/providers/` | React Context Providers |
+
+## 相关文章
+- [[api-map]] — 开发时需参考的 API 文档
+- [[architecture]] — 模块架构参考

@@ -92,3 +92,8 @@ Dashboard 使用 [recharts](https://recharts.org) 渲染：
 - **内存面积图**：`AreaChart` + linearGradient 填充，灰色主题
 
 历史数据为 `generatePseudoHistory()` 生成的伪数据（sin 波 + 随机抖动），实际线上可替换为真实监控数据的 GET 端点。
+
+## 相关文章
+- [[../../wiki/index]] — 全局知识目录
+- [[../../wiki/API契约]] — 后端接口契约（待创建）
+- [[design-system]] — 架构→设计系统的映射

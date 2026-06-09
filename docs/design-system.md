@@ -89,3 +89,6 @@
 - 实现：`<html class="dark">` 切换
 - 存储：localStorage `nas-theme`
 - 切换按钮循环：Light → Dark → System
+
+## 相关文章
+- [[architecture]] — 设计系统的架构基础
