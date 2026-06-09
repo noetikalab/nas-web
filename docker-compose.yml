@@ -9,6 +9,7 @@
 
 services:
   nas-web:
+    container_name: nas-web
     build: .
     network_mode: host
     restart: unless-stopped
