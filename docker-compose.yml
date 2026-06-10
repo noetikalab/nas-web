@@ -10,6 +10,7 @@
 services:
   nas-web:
     container_name: nas-web
+    image: nas-web:latest
     build: .
     network_mode: host
     restart: unless-stopped
